@@ -1,8 +1,9 @@
 import "dotenv/config"
-import jwt from "jsonwebtoken";
+import { Request, Response, NextFunction } from "express";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
-export function authMiddleware(req, res, next){
-    const authHeader = req.headers.authorization;
+export function authMiddleware(req: Request, res: Response, next: NextFunction){
+    const authHeader = req.headers["authorization"];
 
     if(!authHeader || !authHeader.startsWith('Bearer ')) // [Bearer <token>]
         return res.status(403).json({});
@@ -12,13 +13,17 @@ export function authMiddleware(req, res, next){
     try {
         const decoded = jwt.verify(token, `${process.env.JWT_SECRET}`);
 
-        if(decoded.userId){
-            req.userId = decoded.userId;
+        if(decoded){
+            req.userId = (decoded as JwtPayload).userId;
             next();
         } else {
-            return res.status(403).json({})
+            return res.status(403).json({
+                message: "You are not logged in"
+            })
         }
     } catch(err) {
-        return res.status(403).json({});
+        return res.status(403).json({
+            message: "Error logging in"
+        });
     }
 }
