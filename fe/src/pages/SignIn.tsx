@@ -7,6 +7,7 @@ import { InputBox } from "../components/ui/InputBox";
 import { SubHeading } from "../components/ui/SubHeading";
 import { Warning } from "../components/ui/Warning";
 import { ErrorMessage } from "../components/Message";
+import { BE_URL, SIGNIN } from "../utils/const";
 
 export function SignIn() {
     const [username, setUsername] = useState("");
@@ -16,7 +17,7 @@ export function SignIn() {
 
     async function handleSignIn() {
         try {
-            const res = await axios.post("http://localhost:3000/api/v1/user/signin", {
+            const res = await axios.post(BE_URL+SIGNIN, {
                 username,
                 password
             })

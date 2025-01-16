@@ -1,9 +1,10 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "../components/ui/Button";
 import { InputBox } from "../components/ui/InputBox";
 import { ErrorMessage, SuccessMessage } from "../components/Message";
+import { BE_URL, TRANSFER } from "../utils/const";
 
 export function SendMoney(){
     const [searchParams] = useSearchParams();
@@ -17,7 +18,7 @@ export function SendMoney(){
 
     async function handleTransfer(){
         try {
-            await axios.post("http://localhost:3000/api/v1/accounts/transfer",{
+            await axios.post(BE_URL + TRANSFER, {
                 to: id,
                 amount: amount
             },{
@@ -43,7 +44,7 @@ export function SendMoney(){
                 </div>
                 <div className="flex items-center space-x-4">
                     <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center">
-                        <span className="text-xl font-semibold">{name[0]}</span>
+                        <span className="text-xl font-semibold">{name?.[0]}</span>
                     </div>
                     <h3 className="text-2xl font-semibold">{name}</h3>
                 </div>

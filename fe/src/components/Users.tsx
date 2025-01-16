@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react"
 import { Button } from "./ui/Button"
 import { useNavigate } from "react-router-dom";
+import { BE_URL, SEARCH } from "../utils/const";
 
 interface UserType {
     _id: string,
@@ -16,7 +17,7 @@ export function Users() {
     const token = localStorage.getItem('token');
 
     useEffect(()=>{
-            axios.get("http://localhost:3000/api/v1/user/bulk?filter=" +filter, {
+            axios.get(BE_URL + SEARCH + "?filter=" +filter, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

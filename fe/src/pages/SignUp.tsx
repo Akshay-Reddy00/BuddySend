@@ -7,6 +7,7 @@ import { InputBox } from "../components/ui/InputBox";
 import { SubHeading } from "../components/ui/SubHeading";
 import { Warning } from "../components/ui/Warning";
 import { ErrorMessage } from "../components/Message";
+import { BE_URL, SIGNUP } from "../utils/const";
 
 export function SignUp() {
     const [firstName, setFirstName] = useState("");
@@ -18,7 +19,7 @@ export function SignUp() {
 
     async function handleSignUp() {
         try {
-            await axios.post("http://localhost:3000/api/v1/user/signup", {
+            await axios.post(BE_URL + SIGNUP, {
                 firstName,
                 lastName,
                 username,

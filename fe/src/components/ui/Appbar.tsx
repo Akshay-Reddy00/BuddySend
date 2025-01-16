@@ -1,10 +1,11 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { BE_URL, FIRSTNAME } from "../../utils/const";
 
 export function Appbar(){
     const [name, setName] = useState();
     useEffect(() => {
-        axios.get("http://localhost:3000/api/v1/user/firstname", {
+        axios.get(BE_URL + FIRSTNAME, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('token')}`
             }
