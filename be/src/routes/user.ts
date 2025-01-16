@@ -28,7 +28,7 @@ const updateSchema = z.object({
 router.post("/signup", async (req: Request, res: Response) => {
     const result = signUpSchema.safeParse(req.body);
     if(!result.success) {
-        return res.status(411).json({
+        return res.status(401).json({
             message: "Incorrect input"
         })
     }
@@ -38,7 +38,7 @@ router.post("/signup", async (req: Request, res: Response) => {
     })
 
     if(existingUser){
-        return res.status(411).json({
+        return res.status(409).json({
             message: "Username already exists"
         })
     }
@@ -53,7 +53,7 @@ router.post("/signup", async (req: Request, res: Response) => {
     const userId = dbUser._id; //create new account
     await Account.create({
         userId,
-        balance: 1 + Math.random() * 10000 // Skip bank integration
+        balance: Math.round((1 + Math.random() * 10000)*100)/100 // Skip bank integration
     })
 
     // const token = jwt.sign({
@@ -71,6 +71,24 @@ router.post("/signin", async (req: Request, res: Response) => {
     if(!result.success) {
         return res.status(411).json({
             message: "Incorrect inputs"
+        })
+    }
+    
+    if(!result.data.username && !result.data.password){
+        return res.status(400).json({
+            message: "Email and Password are mandatory"
+        })
+    }
+
+    if(!result.data.username) {
+        return res.status(400).json({
+            message: "Email is mandatory"
+        })
+    }
+
+    if(!result.data.password) {
+        return res.status(400).json({
+            message: "Password is mandatory"
         })
     }
 
@@ -91,8 +109,8 @@ router.post("/signin", async (req: Request, res: Response) => {
         return;
     }
 
-    res.status(411).json({
-        message: "Error while logging in"
+    res.status(401).json({
+        message: "Invalid Email or Password"
     })
 })
 
@@ -127,6 +145,7 @@ router.put("/update", authMiddleware, async (req: Request, res: Response) => {
 
 router.get("/bulk", authMiddleware, async (req: Request, res: Response) => {
     const searchFilter = req.query.filter || "";
+    const ownerId = req.userId;
 
     const users  = await User.find({
         $or: [{
@@ -137,7 +156,8 @@ router.get("/bulk", authMiddleware, async (req: Request, res: Response) => {
             lastName: {
                 "$regex": searchFilter
             }
-        }]
+        }],
+        _id: { $ne: ownerId} //not equal
     })
 
     res.json({
@@ -147,6 +167,16 @@ router.get("/bulk", authMiddleware, async (req: Request, res: Response) => {
             lastName: user.lastName,
             _id: user._id
         }))
+    })
+})
+
+router.get("/firstname", authMiddleware, async(req: Request, res: Response) => {
+    const name = req.userId
+
+    const user = await User.findById(name)
+
+    res.json({
+        firstname: user?.firstName
     })
 })
 

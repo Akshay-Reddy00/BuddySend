@@ -10,7 +10,7 @@ export function Warning({label, linkText, to}: IWarningProps){
         <div>
             {label}
         </div>
-        <Link className="pointer underline pl-1 cursor-pointer" to={to}>
+        <Link className="pointer underline pl-1 cursor-pointer hover:font-semibold hover:text-slate-600" to={to}>
             {linkText}
         </Link> 
     </div>
